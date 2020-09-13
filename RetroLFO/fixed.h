@@ -112,7 +112,7 @@ namespace fixed_point {
         static const bool value = T(-1)< T(0);
     };
     
-    template <typename B, int IntegerPrecision, int FractionalPrecision>
+    template <typename B, unsigned char IntegerPrecision, unsigned char FractionalPrecision>
     struct fixed {
         // static_assert(std::is_integral<B>::value);
         static_assert(IntegerPrecision+FractionalPrecision+is_signed<B>::value == 8*sizeof(B));
@@ -134,6 +134,7 @@ namespace fixed_point {
             fixed(fixed const& rhs): _number(rhs._number){ }
 
             template<
+                typename B2,
                 /// The other integer part bit count.
                 unsigned char I2,
                 /// The other fractional part bit count.
@@ -141,13 +142,13 @@ namespace fixed_point {
             /// Converting copy constructor.
             fixed(
                 /// The right hand side.
-                fixed<B, I2, F2> const& rhs)
-                : _number(rhs._number)
+                fixed<B2, I2, F2> const& rhs)
+                : _number(rhs.get())
             { 
-                if (IntegerPrecision-I2 > 0)
-                    _number >>= IntegerPrecision-I2;
-                if (I2-IntegerPrecision > 0)
-                    _number <<= I2-IntegerPrecision;
+                // if (IntegerPrecision-I2 > 0)
+                //     _number >>= IntegerPrecision-I2;
+                // if (I2-IntegerPrecision > 0)
+                //     _number <<= I2-IntegerPrecision;
             }
 
             // /// Copy assignment operator.
@@ -232,13 +233,13 @@ namespace fixed_point {
                 return *this;
             }
 
-            fixed operator +(fixed summand){
+            fixed operator +(fixed summand) const{
                 fixed sum;
                 sum._number = summand._number+_number;
                 return sum;
             }
 
-            fixed operator -(fixed summand){
+            fixed operator -(fixed summand) const{
                 return (*this)+(-summand);
             }
 
@@ -252,21 +253,21 @@ namespace fixed_point {
                 return *this;
             }
 
-            fixed operator *(fixed multiplier){
+            fixed operator *(fixed multiplier) const{
                 fixed result;
                 result._number = _number;
                 result*= multiplier;
                 return result;
             }
 
-            fixed operator /(fixed multiplier){
+            fixed operator /(fixed multiplier) const{
                 fixed result;
                 result._number = _number;
                 result /= multiplier;
                 return result;
             }
 
-            const B get(){
+            B get() const{
                 return _number;
             }
 
@@ -281,34 +282,40 @@ namespace fixed_point {
             // { 
             //     std::swap(_number, rhs._number); 
             // }
-
-            friend fixed abs(fixed x)
+            #ifdef abs
+            friend fixed fabs(fixed x) const
             {
                 return x < fixed(0) ? -x : x;
             }
+            #else
+            friend fixed abs(fixed x) 
+            {
+                return x < fixed(0) ? -x : x;
+            }
+            #endif
 
-            friend fixed ceil(fixed x)
+            friend fixed ceil(fixed x) 
             {
                 fixed result;
                 result._number = x._number & ~(power2<FractionalPrecision>::value-1);
                 return result + fixed(x._number & (power2<FractionalPrecision>::value-1) ? 1 : 0);
             }
 
-            friend fixed floor(fixed x)
+            friend fixed floor(fixed x) 
             {
                 fixed result;
                 result._number = x._number & ~(power2<FractionalPrecision>::value-1);
                 return result;
             }
 
-            friend fixed mod(fixed x, fixed y)
+            friend fixed mod(fixed x, fixed y) 
             {
                 fixed result;
                 result._number = x._number % y._number;
                 return result;
             }
 
-            friend fixed exp(fixed x)
+            friend fixed exp(fixed x) 
             {
                 // a[x] = exp( (1/2) ^ x ), x: [0 ... 31]
                 fixed a[] = {
@@ -368,14 +375,14 @@ namespace fixed_point {
                 return y;
             }
 
-            friend fixed cos(fixed x)
+            friend fixed cos(fixed x) 
             {
                 static const fixed PI_OVER_2 = fixed(M_PI/2);
                 // the expansion for sin proved to be more accurate
                 return sin(x+PI_OVER_2);
             }
 
-            friend fixed sin(fixed x)
+            friend fixed sin(fixed x) 
             {
                 fixed x_ = 
                     mod(x, fixed(M_PI * 2));

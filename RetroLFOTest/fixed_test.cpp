@@ -54,6 +54,15 @@ TEST(FixedTest, Assignment){
 
 }
 
+TEST(FixedTest, DownSample){
+    fixed<int16_t, 3, 12> num1 = fixed<int16_t, 3, 12> (5.23334334);
+    fixed<int32_t, 3, 28> num2 = fixed<int32_t, 3, 28> (num1);
+   
+    // ASSERT_EQ((fixed<int8_t, 3, 4> (5)), num2);
+    ASSERT_FLOAT_EQ(5.0, (float) num2);
+
+}
+
 TEST(FixedTest, Comparison){
     ASSERT_TRUE((fixed<uint16_t,8,8>(2.14) == fixed<uint16_t,8,8>(2.14)));
     ASSERT_FALSE((fixed<uint16_t,8,8>(2.15) == fixed<uint16_t,8,8>(2.14)));

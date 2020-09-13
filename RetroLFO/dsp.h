@@ -23,14 +23,14 @@ typedef COEFFICIENT coefficient;
 
 struct SinOsc {
   private:
-    float phi;
+    frequency phi;
   public:
     SinOsc(frequency _freq, frequency _sampleRate):phi(_freq/_sampleRate){};
     sample operator()(int t){
-      return sin(2*frequency(M_PI)*phi*t);
+      return sample(sin(frequency(2)*frequency(M_PI)*phi*frequency(t)));
     };
     static SinOsc make(frequency freq, frequency sampleRate){
-      return SinOsc{freq,sampleRate};
+      return SinOsc{freq, sampleRate};
     };
 };
 

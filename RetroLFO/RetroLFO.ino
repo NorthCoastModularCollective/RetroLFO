@@ -1,11 +1,11 @@
+#define SAMPLE fixed_point::fixed<int8_t,1,6>
+#define FREQUENCY fixed_point::fixed<unsigned short int,14,2>
+#define COEFFICIENT fixed_point::fixed<unsigned short int,2,14>
+
 #include <tinySPI.h>
 #include "fixed.h"
 #include "dsp.h"
 
-using namespace fixed_point;
-#define SAMPLE fixed<int8_t,1,6>
-#define FREQUENCY fixed<unsigned short int,14,2>
-#define COEFFICIENT fixed<unsigned short int,2,14>
 
 SinOsc makeSignalChain(float freq, float gain, int sampleRate, int modIndex){
   
