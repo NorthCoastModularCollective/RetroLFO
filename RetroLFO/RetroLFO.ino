@@ -1,7 +1,13 @@
 #include <tinySPI.h>
+#include "fixed.h"
 #include "dsp.h"
 
-GainN<FmOsc<SinOsc>> makeSignalChain(float freq, float gain, int sampleRate, int modIndex){
+using namespace fixed_point;
+#define SAMPLE fixed<int8_t,1,6>
+#define FREQUENCY fixed<unsigned short int,14,2>
+#define COEFFICIENT fixed<unsigned short int,2,14>
+
+SinOsc makeSignalChain(float freq, float gain, int sampleRate, int modIndex){
   
 //  return GainNGainN<FmOsc<SinOsc>> { gain, 
 //            FmOsc<SinOsc> { freq, sampleRate, modIndex,
@@ -10,21 +16,18 @@ GainN<FmOsc<SinOsc>> makeSignalChain(float freq, float gain, int sampleRate, int
 //         };
 
   
-  SinOsc mod = SinOsc::make(freq, sampleRate);
-  FmOsc<SinOsc> lfo = FmOsc<SinOsc>::make(freq, sampleRate,mod,modIndex);
-  GainN<FmOsc<SinOsc>> vol = GainN<FmOsc<SinOsc>>::make(gain, lfo);
-  return vol;
+  return SinOsc::make(freq, sampleRate);
 }
 
 template <int bufsize>
 struct SampleBuffer
 {
   private:
-    sample buf[bufsize];
+    int buf[bufsize];
     int writeIndex = 1;
     int readIndex = 0;
   public:
-    static SampleBuffer make(sample b[bufsize], int w, int r){
+    static SampleBuffer make(int b[bufsize], int w, int r){
       SampleBuffer ret;
       ret.buf[bufsize] = b;
       ret.writeIndex = w;
@@ -35,16 +38,16 @@ struct SampleBuffer
       int nextReadIndex = (readIndex+1);
       return SampleBuffer::make(buf, writeIndex, nextReadIndex);
     };
-    SampleBuffer writeNext(sample samp){
+    SampleBuffer writeNext(int samp){
       int nextWriteIndex = (writeIndex+1);
-      sample nextBuf[bufsize];
+      int nextBuf[bufsize];
       for(int i =0; i<bufsize;i++){
         nextBuf[i] = buf[i];
       }
       nextBuf[nextWriteIndex%bufsize] = samp;
       return SampleBuffer::make(nextBuf, nextWriteIndex, readIndex);
     };
-    sample value(){
+    int value(){
       return buf[readIndex%bufsize];
     }
     int getReadIndex(){return readIndex;}
@@ -63,11 +66,11 @@ const int BLOCKSIZE = 64;
 const int CONTROL_UPDATE_PERIOD = 25;
 
 SampleBuffer<BLOCKSIZE> sampleBuffer;
-GainN<FmOsc<SinOsc>> signalChain = makeSignalChain(1,0.5,SAMPLERATE,1);
+SinOsc signalChain = makeSignalChain(1,0.5,SAMPLERATE,1);
 unsigned long timeOfLastControlUpdate;
 int sampleNumber;
 
-GainN<FmOsc<SinOsc>> updateControl(){
+SinOsc updateControl(){
   //read knobs
   //
   int gain = 1;
@@ -102,20 +105,19 @@ void loop() {
 
   //while able, fill the sample buffer up to the block size
   if((sampleBuffer.getWriteIndex()-sampleBuffer.getReadIndex())<BLOCKSIZE){
-    sampleBuffer = sampleBuffer.writeNext(signalChain(sampleNumber++));
+    sampleBuffer = sampleBuffer.writeNext(signalChain(sampleNumber++).get());
   }
 
 }
 
 void updateAudio(){
-
   
   // write next value out of the buffer to the DAC
-  sampleBuffer = sampleBuffer.readNext();
-  int sampleOut = sampleBuffer.value();
-  digitalWrite(LATCH_PIN, LOW);
-  SPI.transfer(sampleOut);
-  digitalWrite(LATCH_PIN, HIGH);
+//  sampleBuffer = sampleBuffer.readNext();
+//  int sampleOut = sampleBuffer.value();
+//  digitalWrite(LATCH_PIN, LOW);
+//  SPI.transfer(sampleOut);
+//  digitalWrite(LATCH_PIN, HIGH);
 
 //   PORTB &= 0b11111011; //faster digitalWrite(10,LOW);
 //   SPI.transfer(dac_out>>8);

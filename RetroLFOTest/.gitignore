@@ -1,0 +1,15 @@
+fixed_test
+dsp_test
+bin/**/*
+CMakeCache.txt
+CMakeFiles/**/*
+cmake_install.cmake
+CTestTestfile.cmake
+googletest-download
+googletest-download/**/*
+googletest-src
+googletest-src/**/*
+googletest-build
+googletest-build/**/*
+lib/**/*
+Testing/**/*
