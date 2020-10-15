@@ -54,12 +54,36 @@ TEST(FixedTest, Assignment){
 
 }
 
-TEST(FixedTest, DownSample){
-    fixed<int16_t, 3, 12> num1 = fixed<int16_t, 3, 12> (5.23334334);
+TEST(FixedTest, ConversionConstructor){
+    fixed<int16_t, 3, 12> num1 = fixed<int16_t, 3, 12> (5);
+    fixed<int32_t, 5, 26> num2 = fixed<int32_t, 5, 26> (num1);
+   
+    ASSERT_EQ((fixed<int32_t, 3, 28>(5)), num2);
+
+}
+
+TEST(FixedTest, UpSample_FractionalPrecision){
+    fixed<int16_t, 3, 12> num1 = fixed<int16_t, 3, 12> (5.2331543);
     fixed<int32_t, 3, 28> num2 = fixed<int32_t, 3, 28> (num1);
    
-    // ASSERT_EQ((fixed<int8_t, 3, 4> (5)), num2);
-    ASSERT_FLOAT_EQ(5.0, (float) num2);
+    ASSERT_EQ((fixed<int32_t, 3, 28>(5.2331543)), num2);
+
+}
+
+TEST(FixedTest, UpSample_IntegerPrecision){
+    fixed<int16_t, 3, 12> num1 = fixed<int16_t, 3, 12> (5.2331543);
+    fixed<int32_t, 19, 12> num2 = fixed<int32_t, 19, 12> (num1);
+   
+    // ASSERT_EQ((fixed<int32_t, 15, 16>(5.2331543)), num2);
+    ASSERT_FLOAT_EQ((5.2331543), (float) num2);
+
+}
+
+TEST(FixedTest, DownSample){
+    fixed<int32_t, 3, 28> num1 = fixed<int32_t, 3, 28> (5.2331543);
+    fixed<int16_t, 3, 12> num2 = fixed<int16_t, 3, 12> (num1);
+   
+    ASSERT_EQ((fixed<int32_t, 3, 28>(5.2331543)), num2);
 
 }
 

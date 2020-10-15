@@ -55,52 +55,36 @@ namespace fixed_point {
     {};
 
     template< typename U>
-    /// Promote signed char to signed short.
     struct promote_type<signed char, U>
     {
         typedef signed short type;
     };
 
-    template<
-        /// Make gcc happy.
-        typename U>
-    /// Promote unsigned char to unsigned short.
+    template<typename U>
     struct promote_type<unsigned char, U>
     {
         typedef unsigned short type;
     };
 
-    template<
-        /// Make gcc happy.
-        typename U>
-    /// Promote signed short to signed int.
+    template<typename U>
     struct promote_type<signed short, U>
     {
         typedef signed int type;
     };
 
-    template<
-        /// Make gcc happy.
-        typename U>
-    /// Promote unsigned short to unsigned int.
+    template<typename U>
     struct promote_type<unsigned short, U> 
     {
         typedef unsigned int type;
     };
 
-    template<
-        /// Make gcc happy.
-        typename U>
-    /// Promote signed int to signed long long.
+    template<typename U>
     struct promote_type<signed int, U> 
     {
         typedef signed long long type;
     };
 
-    template<
-        /// Make gcc happy.
-        typename U>
-    /// Promote unsigned int to unsigned long long.
+    template<typename U>
     struct promote_type<unsigned int, U> 
     {
         typedef unsigned long long type;
@@ -145,10 +129,14 @@ namespace fixed_point {
                 fixed<B2, I2, F2> const& rhs)
                 : _number(rhs.get())
             { 
-                // if (IntegerPrecision-I2 > 0)
-                //     _number >>= IntegerPrecision-I2;
-                // if (I2-IntegerPrecision > 0)
-                //     _number <<= I2-IntegerPrecision;
+                if (FractionalPrecision-F2 > 0)
+                    _number <<= FractionalPrecision-F2;
+                if (F2-FractionalPrecision > 0)
+                    _number >>= F2-FractionalPrecision;
+                if (IntegerPrecision-I2 > 0)
+                    _number >>= IntegerPrecision-I2;
+                if (I2-IntegerPrecision > 0)
+                    _number <<= I2-IntegerPrecision;
             }
 
             // /// Copy assignment operator.
@@ -283,7 +271,7 @@ namespace fixed_point {
             //     std::swap(_number, rhs._number); 
             // }
             #ifdef abs
-            friend fixed fabs(fixed x) const
+            friend fixed fabs(fixed x)
             {
                 return x < fixed(0) ? -x : x;
             }
@@ -435,9 +423,6 @@ namespace fixed_point {
             //     root._number = static_cast<B>(res);
             //     return root;
             // }
-
-
-            
 
     };
 

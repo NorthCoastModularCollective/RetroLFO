@@ -181,6 +181,19 @@ dsp_test/fast:
 .PHONY : dsp_test/fast
 
 #=============================================================================
+# Target rules for targets named dsp_int8_test
+
+# Build rule for target.
+dsp_int8_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 dsp_int8_test
+.PHONY : dsp_int8_test
+
+# fast build rule for target.
+dsp_int8_test/fast:
+	$(MAKE) -f CMakeFiles/dsp_int8_test.dir/build.make CMakeFiles/dsp_int8_test.dir/build
+.PHONY : dsp_int8_test/fast
+
+#=============================================================================
 # Target rules for targets named fixed_test
 
 # Build rule for target.
@@ -246,6 +259,21 @@ gtest/fast:
 .PHONY : gtest/fast
 
 # target to build an object file
+dsp_int8_test.o:
+	$(MAKE) -f CMakeFiles/dsp_int8_test.dir/build.make CMakeFiles/dsp_int8_test.dir/dsp_int8_test.o
+.PHONY : dsp_int8_test.o
+
+# target to preprocess a source file
+dsp_int8_test.i:
+	$(MAKE) -f CMakeFiles/dsp_int8_test.dir/build.make CMakeFiles/dsp_int8_test.dir/dsp_int8_test.i
+.PHONY : dsp_int8_test.i
+
+# target to generate assembly for a file
+dsp_int8_test.s:
+	$(MAKE) -f CMakeFiles/dsp_int8_test.dir/build.make CMakeFiles/dsp_int8_test.dir/dsp_int8_test.s
+.PHONY : dsp_int8_test.s
+
+# target to build an object file
 dsp_test.o:
 	$(MAKE) -f CMakeFiles/dsp_test.dir/build.make CMakeFiles/dsp_test.dir/dsp_test.o
 .PHONY : dsp_test.o
@@ -289,11 +317,15 @@ help:
 	@echo "... dsp_test"
 	@echo "... edit_cache"
 	@echo "... test"
+	@echo "... dsp_int8_test"
 	@echo "... fixed_test"
 	@echo "... gmock_main"
 	@echo "... gmock"
 	@echo "... gtest_main"
 	@echo "... gtest"
+	@echo "... dsp_int8_test.o"
+	@echo "... dsp_int8_test.i"
+	@echo "... dsp_int8_test.s"
 	@echo "... dsp_test.o"
 	@echo "... dsp_test.i"
 	@echo "... dsp_test.s"

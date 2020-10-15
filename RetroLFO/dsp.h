@@ -36,22 +36,36 @@ struct SinOsc {
 
 //need to test drive the following sketches
 
+template<typename T>
+struct FmOsc {
+  private:
+    T modulator;
+  public:
+    FmOsc(float _freq, float _sampleRate, int _index, T _modulator)
+      :phi(_freq/_sampleRate),index(_index),modulator(_modulator){}
+    float phi;
+    int index;
+    sample operator()(int t){
+      return cos(2*phi*t+index*modulator(t));
+    };
+    static FmOsc make(float freq, float sampleRate, T fm, int index){
+      return FmOsc{freq, sampleRate, index,fm};
+    };
+};
+
 // template<typename T>
-// struct FmOsc {
+// struct Env{
 //   private:
-//     T modulator;
+//     sample op(int t, int depth){
+//       // return op(t-1)/2
+//       return 1;
+//     }
 //   public:
-//     FmOsc(float _freq, float _sampleRate, int _index, T _modulator)
-//       :phi(_freq/_sampleRate),index(_index),modulator(_modulator){}
-//     float phi;
-//     int index;
-//     sample operator()(int t){
-//       return cos(2*phi*t+index*modulator(t));
-//     };
-//     static FmOsc make(float freq, float sampleRate, T fm, int index){
-//       return FmOsc{freq, sampleRate, index,fm};
-//     };
-// };
+//     sample operator(int t){
+//       //this(t-1);
+//       return 1;
+//     }
+// }
 
 // template<typename T>
 // struct GainN {
